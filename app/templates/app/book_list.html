@@ -1,0 +1,53 @@
+{% extends "app/base.html" %}
+
+{% load static %}
+
+{% block content %}
+
+<!-- <div>
+    <form action="/" method="GET">
+        {{ form.as_p }}
+        <button type="button" value="Clear"></button>
+        <input type="submit" value="Filter">
+    </form>    
+</div> -->
+
+<table class="table table-striped text-center">
+    <thead class="thead-light">
+        <tr>
+            <th scope="col">Title</th>
+            <th scope="col">Author(s)</th>
+            <th scope="col">Published date</th>
+            <th scope="col">ISBN</th>
+            <th scope="col">Page count</th>
+            <th scope="col">Link</th>
+            <th scope="col">Language</th>
+            <th scope="col">Actions</th>
+        </tr>        
+    </thead>
+    <tbody>
+    {% for obj in book_list %}
+        <tr>
+            <td>{{ obj.title }}</td>
+            <td>{{ obj.author }}</td>
+            <td>{{ obj.published_date }}</td>
+            <td>{{ obj.isbn }}</td>
+            <td>{{ obj.page_count }}</td>
+            <td>{{ obj.link | urlize }}</td>
+            <td>{{ obj.lang }}</td>
+            <td>
+                <div class="btn-group" role="group" aria-label="Basic example">
+                    <form id="form_delete" action="{% url 'delete_book' obj.pk %}" method="POST">{% csrf_token %}
+                        <input id="btn_delete" class="btn btn-danger" type="submit" value="Delete"/>
+                    </form>
+                    <a href="{% url 'edit_book' obj.pk %}" id="btn_edit" type="button" class="btn btn-primary">Edit</a>
+                </div>
+            </td>
+        </tr>
+    {% empty %}
+        <p class="text-center text-danger">No books found.</p>
+    {% endfor %}        
+    </tbody>
+</table>
+
+{% endblock content %}
