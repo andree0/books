@@ -77,7 +77,7 @@ class BookForm(forms.ModelForm):
             }
         ),
         validators=[validate_isbn, ],
-        label="ISBN (13 digits)"
+        label="ISBN (13 or 10 digits)"
     )
 
     class Meta:

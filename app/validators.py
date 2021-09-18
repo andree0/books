@@ -9,5 +9,7 @@ def validate_date(value):
 
 
 def validate_isbn(value):
-    if not value.isdigit() or not len(value) == 13:
-        raise ValidationError("Enter 13 digits !")
+    if not value.isdigit() and not len(value) == 13:
+        raise ValidationError("Enter 13 or 10 digits !")
+    if not value.isdigit() and not len(value) == 10:
+        raise ValidationError("Enter 13 or 10 digits !")
