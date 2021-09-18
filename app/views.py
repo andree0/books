@@ -33,7 +33,8 @@ class BookListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         all_querystring = f"{self.request.GET.urlencode()}".split("&")
-        context["querystring"] = "&".join([ i for i in all_querystring if not "page" in i])
+        context["querystring"] = "&".join(
+            [i for i in all_querystring if "page" not in i])
         context["form"] = FilterBookForm(initial=self.request.GET)
         return context
 
@@ -79,7 +80,7 @@ class ImportBookView(FormView):
         if form.is_valid:
             key_word = request.POST.get("key_word")
             term = request.POST.get("term")
-            url: str = f"https://www.googleapis.com/books/v1/volumes"
+            url: str = "https://www.googleapis.com/books/v1/volumes"
             params = {
                 "q": f"{key_word}+{term}",
                 "printType": "books"

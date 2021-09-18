@@ -1,3 +1,15 @@
 from django.contrib import admin
 
-# Register your models here.
+from app.models import Book
+
+
+@admin.register(Book)
+class BookAdmin(admin.ModelAdmin):
+    fields = (
+        'title',
+        'author',
+        'isbn',
+        'page_count',
+        'link',
+        'lang',
+        )

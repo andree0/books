@@ -58,7 +58,7 @@ class FilterBookForm(forms.Form):
 
 class BookForm(forms.ModelForm):
     published_date = forms.DateField(
-        widget = DatePickerInput(
+        widget=DatePickerInput(
             options={
                 "format": "YYYY-MM-DD",
                 "showClose": True,
@@ -71,7 +71,7 @@ class BookForm(forms.ModelForm):
         validators=[validate_date, ]
     )
     isbn = forms.CharField(
-        widget = forms.TextInput(
+        widget=forms.TextInput(
             attrs={
                 'maxlength': 13
             }

@@ -142,8 +142,8 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
 
-BOOTSTRAP4  =  { 
-    'include_jquery' :  True , 
+BOOTSTRAP4 = {
+    'include_jquery':  True,
 }
 
 # Default primary key field type
