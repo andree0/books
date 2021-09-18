@@ -8,5 +8,5 @@ def validate_date(value):
         raise ValidationError("The date cannot be from the future !")
 
 def validate_isbn(value):
-    if not value.isdigit() or len(value):
+    if not value.isdigit() or not len(value) == 13:
         raise ValidationError("Enter 13 digits !")

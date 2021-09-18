@@ -1,16 +1,20 @@
 {% extends "app/base.html" %}
 
-{% load static %}
-
 {% block content %}
 
-<!-- <div>
-    <form action="/" method="GET">
-        {{ form.as_p }}
-        <button type="button" value="Clear"></button>
-        <input type="submit" value="Filter">
+<div>
+    {% if messages %}
+        {% for message in messages %}
+        <p {% if message.tags %} class="{{ message.tags }} text-center"{% endif %}>{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <form id="filter_form" class="m-3 d-inline-flex" action="/" method="GET">
+        {{ form }}
+        <button class="btn btn-outline-secondary clear" type="button">Clear</button>
+        <input class="btn btn-primary" type="submit" value="Filter">
     </form>    
-</div> -->
+</div>
 
 <table class="table table-striped text-center">
     <thead class="thead-light">
@@ -49,5 +53,31 @@
     {% endfor %}        
     </tbody>
 </table>
-
+{% if is_paginated %}
+<nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}&{{ querystring }}">Previous</a>
+            </li>
+        {% endif %}
+        {% for page_nr in page_obj.paginator.page_range %}
+            {% if page_nr == page_obj.number %}
+            <li class="page-item active">
+                <a class="page-link" href="?page={{ page_nr }}&{{ querystring }}">{{ page_nr }}</a>
+            </li>
+            {% else %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_nr }}&{{ querystring }}">{{ page_nr }}</a>
+            </li>
+            {% endif %}
+        {% endfor %}
+        {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}&{{ querystring }}">Next</a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
 {% endblock content %}
