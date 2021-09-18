@@ -25,5 +25,5 @@ urlpatterns = [
     path('edit-book/<int:pk>/', v.EditBookView.as_view(), name = 'edit_book'),
     path('delete-book/<int:pk>/', v.DeleteBookView.as_view(), name = 'delete_book'),
     path('import-books/', v.ImportBookView.as_view(), name = 'import_books'),
-
+    path('api/', v.BookAPIView.as_view(), name = 'api_book_list'),
 ]

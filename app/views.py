@@ -1,5 +1,7 @@
 import datetime
 import requests
+from django_filters import rest_framework as filters
+from rest_framework.generics import ListAPIView
 from typing import Dict, Tuple
 
 from django.contrib import messages
@@ -8,8 +10,10 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView
 from django.views.generic.edit import DeleteView, FormView, UpdateView
 
+from app.filters import BookFilter
 from app.forms import BookForm, FilterBookForm, ImportBookForm
 from app.models import Book
+from app.serializers import BookSerializer
 
 
 PAGINATE_BY = 10
@@ -104,3 +108,11 @@ class ImportBookView(FormView):
                 Book.objects.create(**data)
 
         return super().post(request, *args, **kwargs)
+
+
+# API View
+class BookAPIView(ListAPIView):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+    filter_backends = (filters.DjangoFilterBackend, )
+    filterset_class = BookFilter

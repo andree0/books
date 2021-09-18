@@ -1,5 +1,5 @@
 $(function(){
-    $("input#btn_delete").click(function(event){
+    $("input.btn_delete").click(function(event){
         return confirm("Are you sure you want to remove a book from the list ?")
       });
 
@@ -15,5 +15,8 @@ $(function(){
     $(".errorlist").addClass("alert-danger");
     $("label").addClass("m-2");
     $("form#book_form > p:first").next().next().append( $("form#book_form > div:first")).addClass("d-inline-block");
+    $(".clear").addClass("mx-2");
+    $(".btn_edit").addClass("my-auto");
+    $(".form_delete").addClass("my-auto");
   });
 

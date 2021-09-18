@@ -34,7 +34,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
 
-    #django app
+    # default app django
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     # other
     'bootstrap4',
     'bootstrap_datepicker_plus',
+    'rest_framework',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
