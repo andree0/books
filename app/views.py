@@ -6,6 +6,7 @@ from typing import Dict, Tuple
 
 from django.contrib import messages
 from django.core.exceptions import ValidationError
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView
 from django.views.generic.edit import DeleteView, FormView, UpdateView
@@ -22,7 +23,7 @@ PAGINATE_BY = 10
 class BookListView(ListView):
     model = Book
     paginate_by = PAGINATE_BY
-    ordering = "-published_date"
+    ordering = ("-published_date", "title", )
 
     FILTERS: Tuple = (
         'title__icontains',
@@ -42,7 +43,7 @@ class BookListView(ListView):
 
     def get_queryset(self):
         super().get_queryset()
-        queryset = self.model.objects.all().order_by(self.ordering)
+        queryset = self.model.objects.all().order_by(*self.ordering)
         dict_filters = {}
         for filter in self.FILTERS:
             if value := self.request.GET.get(filter):
@@ -50,7 +51,7 @@ class BookListView(ListView):
         if dict_filters:
             try:
                 queryset = self.model.objects.filter(
-                    **dict_filters).order_by(self.ordering)
+                    **dict_filters).order_by(*self.ordering)
             except ValidationError:
                 messages.error(self.request, "Bad date format.")
         return queryset
@@ -71,6 +72,9 @@ class EditBookView(UpdateView):
 class DeleteBookView(DeleteView):
     model = Book
     success_url = reverse_lazy("book_list")
+
+    def get(self, request, *args, **kwargs):
+        return redirect(reverse_lazy("book_list"))
 
 
 class ImportBookView(FormView):
@@ -141,7 +145,7 @@ class ImportBookView(FormView):
             old_count_books = Book.objects.count()
             for book in books_data.get("items", []):
                 if data := self.find_required_book_data(book):
-                    Book.objects.create(**data)
+                    Book.objects.get_or_create(**data)
             count_added_books = Book.objects.count() - old_count_books
             messages.success(request, f"Added {count_added_books} books.")
         return super().post(request, *args, **kwargs)

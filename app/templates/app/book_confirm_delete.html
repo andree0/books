@@ -1,5 +1,17 @@
 {% extends "app/base.html" %}
 
 {% block content %}
-
+<p>If you want to delete the following object, confirm it.</p>
+<uL>
+    <li>Title: {{ obj.title }}</li>
+    <li>Autor(s): {{ obj.autor }}</li>
+    <li>Published date: {{ obj.published_date }}</li>
+    <li>ISBN: {{ obj.isbn }}</li>
+    <li>Page count: {{ obj.page_count }}</li>
+    <li>Link: {{ obj.link }}</li>
+    <li>Language: {{ obj.lang }}</li>
+</uL>
+<form class="form_delete" action="{% url 'delete_book' obj.pk %}" method="POST">{% csrf_token %}
+    <input class="btn btn-danger btn_delete" type="submit" value="Delete"/>
+</form>
 {% endblock %}
