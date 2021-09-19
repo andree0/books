@@ -1,28 +1,29 @@
-import datetime
+# other way
 import requests
 from django_filters import rest_framework as filters
 from rest_framework.generics import ListAPIView
 from typing import Dict, Tuple
 
+# default django
 from django.contrib import messages
 from django.core.exceptions import ValidationError
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView
 from django.views.generic.edit import DeleteView, FormView, UpdateView
 
+# my app
 from app.filters import BookFilter
 from app.forms import BookForm, FilterBookForm, ImportBookForm
 from app.models import Book
 from app.serializers import BookSerializer
-
-
-PAGINATE_BY = 10
+from project.settings import APP_PAGINATE_BY
 
 
 class BookListView(ListView):
     model = Book
-    paginate_by = PAGINATE_BY
-    ordering = "-published_date"
+    paginate_by = APP_PAGINATE_BY
+    ordering = ("-published_date", "title", )
 
     FILTERS: Tuple = (
         'title__icontains',
@@ -42,7 +43,7 @@ class BookListView(ListView):
 
     def get_queryset(self):
         super().get_queryset()
-        queryset = self.model.objects.all().order_by(self.ordering)
+        queryset = self.model.objects.all().order_by(*self.ordering)
         dict_filters = {}
         for filter in self.FILTERS:
             if value := self.request.GET.get(filter):
@@ -50,7 +51,7 @@ class BookListView(ListView):
         if dict_filters:
             try:
                 queryset = self.model.objects.filter(
-                    **dict_filters).order_by(self.ordering)
+                    **dict_filters).order_by(*self.ordering)
             except ValidationError:
                 messages.error(self.request, "Bad date format.")
         return queryset
@@ -70,7 +71,14 @@ class EditBookView(UpdateView):
 
 class DeleteBookView(DeleteView):
     model = Book
+    template_name = "app/book_confirm_delete.html"
     success_url = reverse_lazy("book_list")
+    context = {}
+
+    def get(self, request, pk, *args, **kwargs):
+        obj = get_object_or_404(self.model, pk=pk)
+        self.context["obj"] = obj
+        return render(request, self.template_name, self.context)
 
 
 class ImportBookView(FormView):
@@ -112,7 +120,7 @@ class ImportBookView(FormView):
             data["published_date"] = date + "-01"
         else:
             data["published_date"] = None
-        
+
         # validate isbn
         if not info.get("industryIdentifiers"):
             data["isbn"] = None
@@ -124,13 +132,12 @@ class ImportBookView(FormView):
                     data["isbn"] = type.get("identifier")
                 else:
                     data["isbn"] = None
-                    
+
         # skip book with invalid data
         for val in data.values():
             if not val:
                 return {}
         return data
-
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
@@ -141,7 +148,7 @@ class ImportBookView(FormView):
             old_count_books = Book.objects.count()
             for book in books_data.get("items", []):
                 if data := self.find_required_book_data(book):
-                    Book.objects.create(**data)
+                    Book.objects.get_or_create(**data)
             count_added_books = Book.objects.count() - old_count_books
             messages.success(request, f"Added {count_added_books} books.")
         return super().post(request, *args, **kwargs)
