@@ -111,7 +111,7 @@ class ImportBookForm(forms.Form):
         ('inauthor', 'inauthor', ),
         ('isbn', 'isbn', )
     )
-    key_word = forms.CharField(max_length=16, strip=True)
+    key_word = forms.CharField(max_length=128, strip=True)
     term = forms.ChoiceField(
         choices=TERMS,
         required=False,
